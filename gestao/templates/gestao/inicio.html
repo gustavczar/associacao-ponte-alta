@@ -1,0 +1,41 @@
+{% extends "gestao/base.html" %}
+{% block conteudo %}
+<div class="cabeca">
+  <h1>Mural do bairro</h1>
+  <p>Avisos e próximos eventos da Associação de Moradores do Jardim Ponte Alta, em Américo Brasiliense.</p>
+</div>
+
+<section class="cabeca" aria-labelledby="t-eventos">
+  <h2 id="t-eventos">Próximos eventos</h2>
+  {% if eventos %}
+    <ul class="canhotos">
+      {% for e in eventos %}
+        <li class="canhoto">
+          <p class="canhoto-titulo">{{ e.titulo }}</p>
+          <p class="canhoto-meta evento-data"><strong>{{ e.data_evento|date:"l, d/m \à\s H\hi" }}</strong>{% if e.local %} · {{ e.local }}{% endif %}</p>
+          <p>{{ e.texto|linebreaksbr }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="vazio">Nenhum evento marcado por enquanto.</p>
+  {% endif %}
+</section>
+
+<section class="cabeca" aria-labelledby="t-avisos">
+  <h2 id="t-avisos">Avisos</h2>
+  {% if avisos %}
+    <ul class="canhotos">
+      {% for a in avisos %}
+        <li class="canhoto">
+          <p class="canhoto-titulo">{{ a.titulo }}</p>
+          <p class="canhoto-meta">Publicado em {{ a.criado_em|date:"d/m/Y" }}</p>
+          <p>{{ a.texto|linebreaksbr }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="vazio">Nenhum aviso publicado.</p>
+  {% endif %}
+</section>
+{% endblock %}

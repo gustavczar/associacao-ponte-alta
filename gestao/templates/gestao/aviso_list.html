@@ -1,0 +1,39 @@
+{% extends "gestao/base.html" %}
+{% block titulo %}Avisos · Jardim Ponte Alta{% endblock %}
+{% block conteudo %}
+<div class="cabeca">
+  <div class="cabeca-linha">
+    <h1>Avisos e eventos</h1>
+    <a class="botao botao-principal" href="{% url 'aviso_novo' %}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Novo aviso
+    </a>
+  </div>
+  <p>O que estiver publicado aparece no <a href="{% url 'inicio' %}">mural aberto aos moradores</a>.</p>
+</div>
+
+{% if object_list %}
+  <ul class="canhotos">
+    {% for a in object_list %}
+      <li class="canhoto">
+        <div class="canhoto-topo">
+          <span class="canhoto-titulo">{{ a.titulo }}</span>
+        </div>
+        <p class="canhoto-meta">
+          <span class="selo">{{ a.get_tipo_display }}</span>{% if a.data_evento %}{{ a.data_evento|date:"d/m/Y \à\s H\hi" }}{% else %}criado em {{ a.criado_em|date:"d/m/Y" }}{% endif %}
+          · {% if a.publicado %}publicado{% else %}<strong>rascunho, não aparece no mural</strong>{% endif %}
+        </p>
+        <div class="canhoto-links">
+          <a href="{% url 'aviso_editar' a.pk %}">Editar</a>
+          <a class="excluir" href="{% url 'aviso_excluir' a.pk %}">Excluir</a>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+  {% include "gestao/_paginas.html" %}
+{% else %}
+  <div class="vazio">
+    <p>Nenhum aviso ainda. Reunião, mutirão, falta d'água: escreva aqui e o bairro vê no mural.</p>
+    <a class="botao botao-principal" href="{% url 'aviso_novo' %}">Escrever o primeiro aviso</a>
+  </div>
+{% endif %}
+{% endblock %}

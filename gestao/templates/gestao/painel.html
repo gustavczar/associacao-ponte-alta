@@ -1,0 +1,76 @@
+{% extends "gestao/base.html" %}
+{% block titulo %}Início · Jardim Ponte Alta{% endblock %}
+{% block conteudo %}
+<div class="cabeca">
+  <h1>Olá, {{ user.first_name|default:user.username }}</h1>
+  <p>Situação da associação hoje, {% now "d/m/Y" %}.</p>
+</div>
+
+<section class="via" aria-label="Resumo do caixa">
+  <div class="campos">
+    <div class="campo campo-largo">
+      <span class="rotulo">Saldo em caixa</span>
+      <span class="valor valor-grande {% if geral.saldo < 0 %}saida{% endif %}">R$ {{ geral.saldo|floatformat:"2g" }}</span>
+    </div>
+    <div class="campo">
+      <span class="rotulo">Entrou neste mês</span>
+      <span class="valor entrada">R$ {{ mes.entradas|floatformat:"2g" }}</span>
+    </div>
+    <div class="campo">
+      <span class="rotulo">Saiu neste mês</span>
+      <span class="valor saida">R$ {{ mes.saidas|floatformat:"2g" }}</span>
+    </div>
+    <div class="campo campo-largo">
+      <span class="rotulo">Associados ativos</span>
+      <span class="valor">{{ associados_ativos }}</span>
+    </div>
+  </div>
+</section>
+
+<div class="acoes">
+  <a class="botao botao-principal" href="{% url 'lancamento_novo' %}">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Registrar no caixa
+  </a>
+  <a class="botao" href="{% url 'aviso_novo' %}">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Publicar aviso
+  </a>
+</div>
+
+<section class="cabeca" aria-labelledby="t-ultimos">
+  <div class="cabeca-linha">
+    <h2 id="t-ultimos">Últimos lançamentos</h2>
+    <a href="{% url 'financeiro' %}">Ver o caixa</a>
+  </div>
+  {% if ultimos %}
+    <ul class="canhotos">
+      {% for l in ultimos %}
+        <li class="canhoto">
+          <div class="canhoto-topo">
+            <span class="canhoto-titulo">{{ l.descricao }}</span>
+            <span class="canhoto-valor {% if l.tipo == 'E' %}entrada{% else %}saida{% endif %}">{% if l.tipo == 'E' %}+{% else %}−{% endif %} R$ {{ l.valor|floatformat:"2g" }}</span>
+          </div>
+          <p class="canhoto-meta">{{ l.data|date:"d/m/Y" }} · {{ l.get_categoria_display }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="vazio">
+      <p>O caixa ainda está vazio. Comece registrando o dinheiro que a associação já tem hoje, como uma entrada.</p>
+    </div>
+  {% endif %}
+</section>
+
+{% if eventos %}
+<section class="cabeca" aria-labelledby="t-eventos">
+  <h2 id="t-eventos">Próximos eventos</h2>
+  <ul class="canhotos">
+    {% for e in eventos %}
+      <li class="canhoto">
+        <span class="canhoto-titulo">{{ e.titulo }}</span>
+        <p class="canhoto-meta">{{ e.data_evento|date:"d/m/Y \à\s H\hi" }}{% if e.local %} · {{ e.local }}{% endif %}{% if not e.publicado %} · <strong>não publicado</strong>{% endif %}</p>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

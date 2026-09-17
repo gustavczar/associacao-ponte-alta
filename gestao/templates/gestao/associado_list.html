@@ -1,0 +1,47 @@
+{% extends "gestao/base.html" %}
+{% block titulo %}Associados · Jardim Ponte Alta{% endblock %}
+{% block conteudo %}
+<div class="cabeca">
+  <div class="cabeca-linha">
+    <h1>Associados</h1>
+    <a class="botao botao-principal" href="{% url 'associado_novo' %}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Novo associado
+    </a>
+  </div>
+  <p>{{ paginator.count }} cadastrado{{ paginator.count|pluralize }}.</p>
+</div>
+
+<form method="get" class="busca" role="search">
+  <label class="visivel-leitor" for="busca">Procurar por nome, telefone ou endereço</label>
+  <input type="search" id="busca" name="q" value="{{ request.GET.q }}" placeholder="Nome, telefone ou rua">
+  <button type="submit" class="botao">Procurar</button>
+</form>
+
+{% if object_list %}
+  <ul class="canhotos">
+    {% for a in object_list %}
+      <li class="canhoto">
+        <div class="canhoto-topo">
+          <span class="canhoto-titulo">{{ a.nome }}</span>
+          {% if not a.ativo %}<span class="selo">Inativo</span>{% endif %}
+        </div>
+        <p class="canhoto-meta">
+          {% if a.telefone %}{{ a.telefone }} · {% endif %}{% if a.endereco %}{{ a.endereco }} · {% endif %}desde {{ a.data_associacao|date:"m/Y" }}
+        </p>
+        <div class="canhoto-links">
+          <a href="{% url 'associado_editar' a.pk %}">Editar</a>
+          <a class="excluir" href="{% url 'associado_excluir' a.pk %}">Excluir</a>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+  {% include "gestao/_paginas.html" %}
+{% elif request.GET.q %}
+  <div class="vazio"><p>Ninguém encontrado com “{{ request.GET.q }}”.</p><a href="{% url 'associados' %}">Ver todos</a></div>
+{% else %}
+  <div class="vazio">
+    <p>Nenhum associado cadastrado ainda. Cada morador que paga a mensalidade entra aqui, com nome e telefone.</p>
+    <a class="botao botao-principal" href="{% url 'associado_novo' %}">Cadastrar o primeiro</a>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "gestao/base.html" %}
+{% block titulo %}Caixa · Jardim Ponte Alta{% endblock %}
+{% block conteudo %}
+<div class="cabeca">
+  <div class="cabeca-linha">
+    <h1>Caixa</h1>
+    <a class="botao botao-principal" href="{% url 'lancamento_novo' %}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Registrar
+    </a>
+  </div>
+</div>
+
+<form method="get" class="busca">
+  <label class="visivel-leitor" for="mes">Escolher o mês</label>
+  <input type="month" id="mes" name="mes" value="{{ mes|date:'Y-m' }}">
+  <button type="submit" class="botao">Ver mês</button>
+</form>
+
+<section class="via" aria-label="Resumo de {{ mes|date:'F \d\e Y' }}">
+  <div class="campos">
+    <div class="campo">
+      <span class="rotulo">Entradas em {{ mes|date:"F" }}</span>
+      <span class="valor entrada">R$ {{ resumo.entradas|floatformat:"2g" }}</span>
+    </div>
+    <div class="campo">
+      <span class="rotulo">Saídas em {{ mes|date:"F" }}</span>
+      <span class="valor saida">R$ {{ resumo.saidas|floatformat:"2g" }}</span>
+    </div>
+    <div class="campo">
+      <span class="rotulo">Resultado do mês</span>
+      <span class="valor {% if resumo.saldo < 0 %}saida{% endif %}">R$ {{ resumo.saldo|floatformat:"2g" }}</span>
+    </div>
+    <div class="campo">
+      <span class="rotulo">Saldo total em caixa</span>
+      <span class="valor {% if saldo_geral < 0 %}saida{% endif %}">R$ {{ saldo_geral|floatformat:"2g" }}</span>
+    </div>
+  </div>
+</section>
+
+{% if object_list %}
+  <ul class="canhotos">
+    {% for l in object_list %}
+      <li class="canhoto">
+        <div class="canhoto-topo">
+          <span class="canhoto-titulo">{{ l.descricao }}</span>
+          <span class="canhoto-valor {% if l.tipo == 'E' %}entrada{% else %}saida{% endif %}">{% if l.tipo == 'E' %}+{% else %}−{% endif %} R$ {{ l.valor|floatformat:"2g" }}</span>
+        </div>
+        <p class="canhoto-meta">
+          <span class="selo {% if l.tipo == 'E' %}entrada{% else %}saida{% endif %}">{{ l.get_tipo_display }}</span>{{ l.data|date:"d/m/Y" }} · {{ l.get_categoria_display }}{% if l.associado %} · {{ l.associado }}{% endif %}
+        </p>
+        <div class="canhoto-links">
+          <a href="{% url 'lancamento_editar' l.pk %}">Editar</a>
+          <a class="excluir" href="{% url 'lancamento_excluir' l.pk %}">Excluir</a>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <div class="vazio">
+    <p>Nada registrado em {{ mes|date:"F \d\e Y" }}. Mensalidades, doações e contas pagas entram aqui.</p>
+    <a class="botao botao-principal" href="{% url 'lancamento_novo' %}">Registrar agora</a>
+  </div>
+{% endif %}
+{% endblock %}

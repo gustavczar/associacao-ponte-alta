@@ -1,0 +1,18 @@
+{% extends "gestao/base.html" %}
+{% block titulo %}{{ titulo }} · Jardim Ponte Alta{% endblock %}
+{% block conteudo %}
+<div class="cabeca">
+  <a href="{{ voltar }}">← Voltar</a>
+  <h1>{{ titulo }}</h1>
+</div>
+
+<form method="post" class="via formulario">
+  {% csrf_token %}
+  <p>Você vai excluir <strong>{{ object }}</strong>.</p>
+  <p class="erro">Isso não pode ser desfeito.</p>
+  <div class="acoes">
+    <a class="botao" href="{{ voltar }}">Não, manter</a>
+    <button type="submit" class="botao botao-perigo">Sim, excluir</button>
+  </div>
+</form>
+{% endblock %}

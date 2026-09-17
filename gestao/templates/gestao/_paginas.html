@@ -1,0 +1,7 @@
+{% if is_paginated %}
+<nav class="paginas" aria-label="Páginas">
+  {% if page_obj.has_previous %}<a class="botao" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}">Anterior</a>{% else %}<span></span>{% endif %}
+  <span>Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a class="botao" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}">Próxima</a>{% else %}<span></span>{% endif %}
+</nav>
+{% endif %}
